@@ -52,9 +52,11 @@ except Exception:
 try:
     from smartcard.System import readers as pcsc_readers
     from smartcard.util import toHexString
+    from smartcard.CardConnection import CardConnection
 except Exception:
     pcsc_readers = None
     toHexString = None
+    CardConnection = None
 
 
 # ---------------------------------------------------------
@@ -275,6 +277,14 @@ def command_doctor(args) -> int:
 # READERS
 # ---------------------------------------------------------
 
+def card_connection_protocol(protocol: str) -> Optional[int]:
+    if protocol == "t0":
+        return getattr(CardConnection, "T0_protocol", None)
+    if protocol == "t1":
+        return getattr(CardConnection, "T1_protocol", None)
+    return None
+
+
 def command_readers(args) -> int:
 
     print("Scanner efter PC/SC smartcard readers...\n")
@@ -300,7 +310,11 @@ def command_readers(args) -> int:
                 print("    Tester kortkontakt...")
 
                 connection = reader.createConnection()
-                connection.connect()
+                connect_protocol = card_connection_protocol(args.protocol)
+                if connect_protocol is None:
+                    connection.connect()
+                else:
+                    connection.connect(connect_protocol)
 
                 atr = connection.getATR()
                 atr_hex = " ".join(f"{b:02X}" for b in atr)
@@ -561,7 +575,11 @@ def command_probe_fido(args) -> int:
     try:
 
         connection = reader.createConnection()
-        connection.connect()
+        connect_protocol = card_connection_protocol(args.protocol)
+        if connect_protocol is None:
+            connection.connect()
+        else:
+            connection.connect(connect_protocol)
 
         atr = connection.getATR()
 
@@ -675,6 +693,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_readers.add_argument(
         "--test-card",
         action="store_true",
+    )
+
+    p_readers.add_argument(
+        "--protocol",
+        choices=["auto", "t0", "t1"],
+        default="t0",
+        help="Kortprotokol ved korttest (auto, t0, t1)",
     )
 
     p_readers.set_defaults(
@@ -799,6 +824,13 @@ def build_parser() -> argparse.ArgumentParser:
         "--reader-index",
         type=int,
         default=1,
+    )
+
+    p_probe.add_argument(
+        "--protocol",
+        choices=["auto", "t0", "t1"],
+        default="auto",
+        help="Kortprotokol ved kortforbindelse (auto, t0, t1)",
     )
 
     p_probe.set_defaults(
