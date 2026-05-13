@@ -1,0 +1,3 @@
+fido2[pcsc]>=2.2.0
+pyscard>=2.3.0
+hidapi>=0.14.0

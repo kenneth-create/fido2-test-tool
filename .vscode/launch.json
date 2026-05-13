@@ -1,0 +1,55 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FIDO2 doctor",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/fido2_test_tool.py",
+      "console": "integratedTerminal",
+      "args": ["doctor", "--transport", "auto"]
+    },
+    {
+      "name": "List FIDO2 devices PCSC",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/fido2_test_tool.py",
+      "console": "integratedTerminal",
+      "args": ["list", "--transport", "pcsc"]
+    },
+    {
+      "name": "List smartcard readers",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/fido2_test_tool.py",
+      "console": "integratedTerminal",
+      "args": ["readers", "--test-card"]
+    },
+    {
+      "name": "Probe FIDO applet",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/fido2_test_tool.py",
+      "console": "integratedTerminal",
+      "args": ["probe-fido", "--reader-index", "1"]
+    },
+    {
+      "name": "Enroll credential PCSC",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/fido2_test_tool.py",
+      "console": "integratedTerminal",
+      "args": [
+        "enroll",
+        "--transport", "pcsc",
+        "--device-index", "0",
+        "--rp-id", "localhost",
+        "--origin", "https://localhost",
+        "--user-name", "testuser@example.local",
+        "--display-name", "Test User",
+        "--attestation", "direct",
+        "--user-verification", "discouraged"
+      ]
+    }
+  ]
+}
